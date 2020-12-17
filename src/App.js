@@ -2,13 +2,15 @@
 import './App.css';
 import { useState } from 'react'
 import { uuid } from 'uuidv4';
+import { TodoInput } from './components/TodoInput';
+import { TodoInputContext, TodoContext } from './context/context';
 
 function App() {
 
-let initialArray = window.localStorage.getItem("todos")
-? window.localStorage.getItem("todos")
-: []
-  
+  let initialArray = window.localStorage.getItem("todos")
+    ? window.localStorage.getItem("todos")
+    : []
+
   const [todoList, setTodoList] = useState(initialArray)
   const [inputValue, setInputValue] = useState("")
 
@@ -39,22 +41,42 @@ let initialArray = window.localStorage.getItem("todos")
     setTodoList(newTodoList)
   }
 
-  function handleDelete(deleteItem){
+  function handleDelete(deleteItem) {
     let newTodoList = [...todoList]
-    const afterDeleteTodo = newTodoList.filter(item => item!==deleteItem)
+    const afterDeleteTodo = newTodoList.filter(item => item !== deleteItem)
     setTodoList(afterDeleteTodo)
   }
 
   return (
     <div className="App">
-      this is the todo app
-      <form onSubmit={addTodo}>
+      < TodoInputContext.Provider value={{ addTodo, setInputValue }}>
+        <TodoInput />
+      </TodoInputContext.Provider >
+
+
+      {todoList.map(item => {
+        return (
+          <>
+            <li
+              className={item.isComplete ? 'completed-task' : ''}
+              key={item.id}>{item.name}</li>
+            <button
+              onClick={() => handleDone(item)}
+            >done</button>
+            <button
+              onClick={() => handleDelete(item)}
+            >delete</button>
+            <hr />
+          </>
+        )
+      })}
+
+      {/* <form onSubmit={addTodo}>
         <input
           onChange={(e) => setInputValue(e.target.value)}
         ></input>
-        <button>Add</button>
-
-        {todoList.map(item => {
+        <button>Add</button> */}
+      {/* {todoList.map(item => {
           return (
             <>
               <li
@@ -69,8 +91,8 @@ let initialArray = window.localStorage.getItem("todos")
               <hr />
             </>
           )
-        })}
-      </form>
+        })} */}
+      {/* </form> */}
     </div>
   );
 }
