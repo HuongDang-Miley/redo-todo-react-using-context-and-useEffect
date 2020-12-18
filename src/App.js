@@ -1,8 +1,9 @@
 
 import './App.css';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { uuid } from 'uuidv4';
 import { TodoInput } from './components/TodoInput';
+import { Todo } from './components/Todo';
 import { TodoInputContext, TodoContext } from './context/context';
 
 function App() {
@@ -47,52 +48,20 @@ function App() {
     setTodoList(afterDeleteTodo)
   }
 
+  const showTodoList = () => {
+    return todoList.map(item=>{return(
+      <TodoContext.Provider value={{item, handleDone, handleDelete}}>
+        <Todo/>
+      </TodoContext.Provider> 
+      )})
+  } 
+
   return (
     <div className="App">
-      < TodoInputContext.Provider value={{ addTodo, setInputValue }}>
+      < TodoInputContext.Provider value={{todoList, addTodo, inputValue, setInputValue }}>
         <TodoInput />
       </TodoInputContext.Provider >
-
-
-      {todoList.map(item => {
-        return (
-          <>
-            <li
-              className={item.isComplete ? 'completed-task' : ''}
-              key={item.id}>{item.name}</li>
-            <button
-              onClick={() => handleDone(item)}
-            >done</button>
-            <button
-              onClick={() => handleDelete(item)}
-            >delete</button>
-            <hr />
-          </>
-        )
-      })}
-
-      {/* <form onSubmit={addTodo}>
-        <input
-          onChange={(e) => setInputValue(e.target.value)}
-        ></input>
-        <button>Add</button> */}
-      {/* {todoList.map(item => {
-          return (
-            <>
-              <li
-                className={item.isComplete ? 'completed-task' : ''}
-                key={item.id}>{item.name}</li>
-              <button
-                onClick={() => handleDone(item)}
-              >done</button>
-              <button
-                onClick={() => handleDelete(item)}
-              >delete</button>
-              <hr />
-            </>
-          )
-        })} */}
-      {/* </form> */}
+      {showTodoList()}      
     </div>
   );
 }
